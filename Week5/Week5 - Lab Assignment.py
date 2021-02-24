@@ -3,7 +3,8 @@ Lab 5
 '''
 
 ######### Part 1 ###########
-
+import pandas as pd
+from sklearn.model_selection import train_test_split
 
 '''
     1-1) Download the iris-data-3 from Canvas, use pandas.read_csv to load it. This dataset has 5 input features: [sepal_length, sepal_width, petal_length, petal_width, color]
@@ -11,6 +12,13 @@ Lab 5
     1-3) Split your data into train(70% of data) and test(30% of data) via random selection
 '''
 # YOUR CODE GOES HERE  
+#1-1
+df = pd.read_csv("iris-data-3.csv")
+
+result_df = df["ID"].drop_duplicates()
+y = df.species
+x = df.drop('species', axis=1)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.7, random_state=123)
 
 
 '''
@@ -20,6 +28,13 @@ Lab 5
     2-3) Print the confusion matrix for the results on the test set. 
 '''
 # YOUR CODE GOES HERE  
+#2-1
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+knn = KNeighborsClassifier(n_neighbors=5, metric="manhattan")
+knn.fit(x_train, y_train)
+#could not convert string to float: 'red'
 
 '''
     3) Test your trained model with the given test set below and report the performance.
