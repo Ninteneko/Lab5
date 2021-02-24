@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
 '''
 Lab 5
@@ -21,6 +22,7 @@ Lab 5
 iris = pd.read_csv("iris-data-3.csv")
 iris = iris.drop_duplicates(subset="ID")
 X = iris.drop(columns="species")
+X = pd.get_dummies(X, dummy_na=True)
 y = iris["species"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
@@ -33,8 +35,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 # YOUR CODE GOES HERE  
 
 knn = KNeighborsClassifier(n_neighbors=5, metric='manhattan')
-X_train = pd.get_dummies(X_train, dummy_na=True)
 knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+print(confusion_matrix(y_test, y_pred))
+
 
 '''
     3) Test your trained model with the given test set below and report the performance.
@@ -44,8 +48,11 @@ X_test = np.asarray([[5 , 1, 0.2 , 5,'red'],[0.9 , 7, 6.2 , 2.1,'red'], [0.9 , 7
 Y_test = np.asarray(['virginica', 'virginica','virginica', 'versicolor' ,'setosa'])
 # YOUR CODE GOES HERE  
 
+#X_test = pd.DataFrame(data=X_test)
+#Y_test = pd.DataFrame(data=Y_test)
 #X_test = pd.get_dummies(X_test, dummy_na=True)
-Y_pred = knn.predict(X_test)
+#print(X_train, X_test)
+#Y_pred = knn.predict(X_test)
 #print(accuracy_score(Y_test, Y_pred))
 
 '''
