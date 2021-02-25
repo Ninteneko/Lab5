@@ -5,6 +5,11 @@ Lab 5
 ######### Part 1 ###########
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt  
+import numpy as np
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.feature_extraction import DictVectorizer
 
 '''
     1-1) Download the iris-data-3 from Canvas, use pandas.read_csv to load it. This dataset has 5 input features: [sepal_length, sepal_width, petal_length, petal_width, color]
@@ -15,10 +20,11 @@ from sklearn.model_selection import train_test_split
 #1-1
 df = pd.read_csv("iris-data-3.csv")
 
-result_df = df["ID"].drop_duplicates()
+df = df.drop_duplicates(subset="ID")
+X = df.drop('species', axis=1)
 y = df.species
-x = df.drop('species', axis=1)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.7, random_state=123)
+X = pd.get_dummies(X, dummy_na=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=123)
 
 
 '''
@@ -33,7 +39,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 
 knn = KNeighborsClassifier(n_neighbors=5, metric="manhattan")
-knn.fit(x_train, y_train)
+
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_test)
+result = metrics.confusion_matrix(y_test, y_pred)
+print(result)
 #could not convert string to float: 'red'
 
 '''
@@ -44,6 +55,11 @@ X_test = np.asarray([[5 , 1, 0.2 , 5,'red'],[0.9 , 7, 6.2 , 2.1,'red'], [0.9 , 7
 Y_test = np.asarray(['virginica', 'virginica','virginica', 'versicolor' ,'setosa'])
 # YOUR CODE GOES HERE  
 
+knn = KNeighborsClassifier(n_neighbors=5, metric="manhattan")
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+
+metrics.accuracy_score(Y_test, y_pred)
 
 '''
     4)  Use DictVectorizer from sklearn.feature_extraction to solve Q2
