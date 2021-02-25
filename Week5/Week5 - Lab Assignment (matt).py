@@ -22,7 +22,6 @@ Lab 5
 iris = pd.read_csv("iris-data-3.csv")
 iris = iris.drop_duplicates(subset="ID")
 X = iris.drop(columns="species")
-#X = pd.get_dummies(X, dummy_na=True)
 y = iris["species"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
