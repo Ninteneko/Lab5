@@ -22,7 +22,7 @@ Lab 5
 iris = pd.read_csv("iris-data-3.csv")
 iris = iris.drop_duplicates(subset="ID")
 X = iris.drop(columns="species")
-X = pd.get_dummies(X, dummy_na=True)
+#X = pd.get_dummies(X, dummy_na=True)
 y = iris["species"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
@@ -35,9 +35,15 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 # YOUR CODE GOES HERE  
 
 knn = KNeighborsClassifier(n_neighbors=5, metric='manhattan')
+X_train = pd.get_dummies(X_train)
 knn.fit(X_train, y_train)
+
+X_test = pd.get_dummies(X_test)
+X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
+
 y_pred = knn.predict(X_test)
-print(confusion_matrix(y_test, y_pred))
+
+print(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
 
 
 '''
@@ -48,12 +54,12 @@ X_test = np.asarray([[5 , 1, 0.2 , 5,'red'],[0.9 , 7, 6.2 , 2.1,'red'], [0.9 , 7
 Y_test = np.asarray(['virginica', 'virginica','virginica', 'versicolor' ,'setosa'])
 # YOUR CODE GOES HERE  
 
-#X_test = pd.DataFrame(data=X_test)
-#Y_test = pd.DataFrame(data=Y_test)
-#X_test = pd.get_dummies(X_test, dummy_na=True)
-#print(X_train, X_test)
-#Y_pred = knn.predict(X_test)
-#print(accuracy_score(Y_test, Y_pred))
+X_test = pd.DataFrame(data=X_test)
+Y_test = pd.DataFrame(data=Y_test)
+X_test = pd.get_dummies(X_test, columns=[4])
+X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
+Y_pred = knn.predict(X_test)
+print(f"Accuracy: {accuracy_score(Y_test, Y_pred)}\n")
 
 '''
     4)  Use DictVectorizer from sklearn.feature_extraction to solve Q2
