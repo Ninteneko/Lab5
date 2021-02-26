@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.preprocessing import LabelEncoder
 
 '''
 Lab 5
@@ -23,7 +25,7 @@ iris = pd.read_csv("iris-data-3.csv")
 iris = iris.drop_duplicates(subset="ID")
 X = iris.drop(columns="species")
 y = iris["species"]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 '''
     2-1) Train a KNN classifier for the (k = 5, metric='manhattan'). Did you encounter an error? what is the error? how can we fix it?
@@ -65,8 +67,27 @@ print(f"Accuracy: {accuracy_score(Y_test, Y_pred)}\n")
 '''
 # YOUR CODE GOES HERE  
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+X_train_dict = X_train.to_dict(orient='records')
+dv = DictVectorizer(sparse=False)
+X_train_encoded = dv.fit_transform(X_train_dict)
+
+knn.fit(X_train_encoded, y_train)
+
+X_test_dict = X_test.to_dict(orient='records')
+X_test_encoded = dv.transform(X_test_dict)
+
+y_pred = knn.predict(X_test_encoded)
+
+print(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
 
 '''
     5)  Use OneHotEncoder and LabelEncoder from sklearn.preprocessing to solve Q2
 '''
 # YOUR CODE GOES HERE  
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+categorical_feature_mask = X_train.dtypes==object
+categorical_cols = X_train.columns[categorical_feature_mask].tolist()
+
