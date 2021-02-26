@@ -6,6 +6,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from numpy import argmax
+pd.options.mode.chained_assignment = None
 
 '''
 Lab 5
@@ -44,7 +47,7 @@ X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
 
 y_pred = knn.predict(X_test)
 
-print(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
+print(f"Fix: get_dummies\nConfusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
 
 
 '''
@@ -80,7 +83,7 @@ X_test_encoded = dv.transform(X_test_dict)
 
 y_pred = knn.predict(X_test_encoded)
 
-print(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
+print(f"Fix: DictVectorizer\nConfusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
 
 '''
     5)  Use OneHotEncoder and LabelEncoder from sklearn.preprocessing to solve Q2
@@ -88,6 +91,16 @@ print(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
 # YOUR CODE GOES HERE  
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-categorical_feature_mask = X_train.dtypes==object
-categorical_cols = X_train.columns[categorical_feature_mask].tolist()
 
+le = LabelEncoder()
+X_train['color'] = le.fit_transform(X_train['color'])
+X_test['color'] = le.transform(X_test['color'])
+
+#ohe = OneHotEncoder(sparse=False)
+#X_train = pd.concat((X_train, pd.DataFrame(ohe.fit_transform(X_train['color'].values.reshape(-1,1)))),1)
+
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_test)
+
+print(f"Fix: LabelEncoder\nConfusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
