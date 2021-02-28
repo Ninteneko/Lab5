@@ -1,3 +1,6 @@
+# Matt Brierley
+# Yarelit Mendoza
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -7,7 +10,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
-from numpy import argmax
 pd.options.mode.chained_assignment = None
 
 '''
@@ -96,11 +98,18 @@ le = LabelEncoder()
 X_train['color'] = le.fit_transform(X_train['color'])
 X_test['color'] = le.transform(X_test['color'])
 
-#ohe = OneHotEncoder(sparse=False)
-#X_train = pd.concat((X_train, pd.DataFrame(ohe.fit_transform(X_train['color'].values.reshape(-1,1)))),1)
+ohe = OneHotEncoder(sparse=False)
+transformed = ohe.fit_transform(X_train['color'].to_numpy().reshape(-1,1))
+ohe_df = pd.DataFrame(transformed, columns=ohe.get_feature_names())
+X_train = pd.concat([X_train.reset_index(drop=True), ohe_df.reset_index(drop=True)], axis=1, join='outer').drop(['color'], axis=1)
+
+transformed = ohe.transform(X_test['color'].to_numpy().reshape(-1,1))
+ohe_df = pd.DataFrame(transformed, columns=ohe.get_feature_names())
+X_test = pd.concat([X_test.reset_index(drop=True), ohe_df.reset_index(drop=True)], axis=1, join='outer').drop(['color'], axis=1)
+
 
 knn.fit(X_train, y_train)
 
 y_pred = knn.predict(X_test)
 
-print(f"Fix: LabelEncoder\nConfusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
+print(f"Fix: LabelEncoder and OneHotEncoder\nConfusion Matrix:\n{confusion_matrix(y_test, y_pred)}\n")
